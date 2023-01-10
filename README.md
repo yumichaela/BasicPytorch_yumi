@@ -1,1 +1,1 @@
-# BasicPytorch2023
+# Study_BasicPytorch
