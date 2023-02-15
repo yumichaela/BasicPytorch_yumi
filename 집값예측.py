@@ -35,4 +35,3 @@ testloader = torch.utils.data.DataLoader(trainsets, batch_size=32, suffle=False)
 class Regressor(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(13, 50, bias=True)
