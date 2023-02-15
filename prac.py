@@ -26,50 +26,54 @@ y = diabetes.target
 xt = torch.FloatTensor(x)  # numpy array를 torch의 tensor로 변환합니다. 
 yt = torch.FloatTensor(y)
 
-w = torch.ones([1], requires_grad=True)
-b = torch.ones([1], requires_grad=True)
-
-optimizer = torch.optim.SGD([w, b], lr=1e-2)
-loss_fn = torch.nn.MSELoss()
-
-# 1회 어떻게 작동하는지 체크하는 코드입니다. 
-# y_hat = xt[0] * w + b 
-# loss = loss_fn(y_hat, yt[0])
-
-# optimizer.zero_grad() 
-# loss.backward() 
-# optimizer.step() 
-
-# 모든 데이터 셋에 대해서 해봅시다. 
-cnt = 0 
-idx = [i for i in range(len(x))]  # 이 문법에 대해서 찾아보세요!
-
-"""
-idx = [i for i in range(len(x))] 
-위 문장은 아래 for문과 같은 의미입니다 
-idx = list() 
-for i in range(len(x)):
-    idx.append(i)
-"""
-for k in range(100):
-    idx = np.random.permutation(idx)  
-    # permutaion은 안에 순서를 바꾸어줍니다. 
-    epoch_loss = 0
-    for i in idx:
-        """ 
-        idx의 순서가 바뀌어 들어간다는 것은 epoch마다 학습에 사용되는 샘플의 순서가 바뀐다는 뜻입니다. 
+class LinearRegression(torch.nn.Module):
+    def __init__(self, lr=1e-2):
+        super().__init__()
+        self.model = torch.nn.Linear(1, 1) 
         """
-        y_hat = xt[i] * w + b
-        loss = loss_fn(y_hat, yt[i].unsqueeze(0))
-
-        epoch_loss += loss.data.numpy()
-        optimizer.zero_grad()
-        loss.backward() 
-        optimizer.step() 
-    
-    epoch_loss = epoch_loss / len(idx)
-    print("Epoch : {}, Loss : {}".format(k, epoch_loss))
+        Linear 함수로 w (1차원), b (1차원) 텐서를 만들어줍니다. 
         
-    if k % 20 == 0:
-        plot(x, y, w, b, cnt, name="lec2_2_")
-        cnt += 1
+        w = torch.ones([1], requires_grad=True)
+        b = torch.ones([1], requires_grad=True)
+        이거 대신 Linear를 사용합니다. 
+        """
+        self._set_optimizer(lr)
+        self._set_loss()
+
+    def _set_optimizer(self, lr):
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+
+    def _set_loss(self):
+        self.loss_fn = torch.nn.MSELoss()
+
+    def train(self, x, y, xt, yt, epoch, fig_name):
+        cnt = 0 
+        idx = [i for i in range(len(x))]  
+
+        for k in range(epoch):
+            idx = np.random.permutation(idx)  
+            # permutaion은 안에 순서를 바꾸어줍니다. 
+            epoch_loss = 0
+            for i in idx:
+                """ 
+                idx의 순서가 바뀌어 들어간다는 것은 epoch마다 학습에 사용되는 샘플의 순서가 바뀐다는 뜻입니다. 
+                """
+                y_hat = self.model(xt[i].unsqueeze(0))
+                loss = self.loss_fn(y_hat, yt[i].unsqueeze(0))
+
+                epoch_loss += loss.data.numpy()
+                self.optimizer.zero_grad()
+                loss.backward() 
+                self.optimizer.step() 
+
+            epoch_loss = epoch_loss / len(idx)
+            print("Epoch : {}, Loss : {}".format(k, epoch_loss))
+
+            if (k + 1) % 20 == 0:
+                plot(x, y, self.model.weight[0], self.model.bias[0], cnt, name=fig_name)
+                cnt += 1
+
+
+
+my_model = LinearRegression(lr=1e-2)
+my_model.train(x, y, xt, yt, epoch=100, fig_name="lec2_3_")

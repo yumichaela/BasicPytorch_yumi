@@ -23,13 +23,14 @@ diabetes = load_diabetes()
 x = diabetes.data[:, 2]
 y = diabetes.target
 
-xt = torch.FloatTensor(x)  # numpy array를 torch의 tensor로 변환합니다. 
+xt = torch.FloatTensor(x)  # numpy array를 torch의 tensor로 변환함
 yt = torch.FloatTensor(y)
 
-w = torch.ones([1], requires_grad=True) # 역전파 과정을 수행할 것임
+w = torch.ones([1], requires_grad=True) # requires_grad=True : 해당 텐서를 기준으로 모든 연산들을 추적하여 Gradient라고 하는 미분값의 모임(배열)을 계산할 수 있게 함.
 b = torch.ones([1], requires_grad=True)
 
-optimizer = torch.optim.SGD([w, b], lr=1e-2) # lr : "Learning Rate"(미분값을 얼마나 이동시킬 것인가)
+optimizer = torch.optim.SGD([w, b], lr=1e-2) # lr : "Learning Rate"(미분값을 얼마나 이동시킬 것인가 = 하강에 대한 보폭을 정해주는 값)
+# SGD : 확률적 경사하강법 : (데이터 전체를 한 번에 사용하는게 아니라) 나눠서 사용함(데이터가 많을 경우 연산량이 많아 모델의 학습 속도가 느려짐 or 메모리 부족 문제 보완 목적)
 loss_fn = torch.nn.MSELoss() # mean squared error를 구하는 loss function. 
 
 # 1회 어떻게 작동하는지 체크하는 코드입니다. 
