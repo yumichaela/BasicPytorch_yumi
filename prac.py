@@ -1,3 +1,4 @@
+# 전체적인 큰 구조 외우기
 import torch 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -48,7 +49,8 @@ class LinearRegression(torch.nn.Module):
 
     def train(self, x, y, xt, yt, epoch, fig_name):
         cnt = 0 
-        idx = [i for i in range(len(x))]  
+        for x, y in dataloader:
+            breakpoint()
 
         for k in range(epoch):
             idx = np.random.permutation(idx)  
