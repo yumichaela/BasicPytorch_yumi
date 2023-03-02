@@ -17,7 +17,7 @@ cancer.data[:3]
 # plt.show()
 
 # 2. 타겟 데이터 확인, 훈련 데이터 준비
-np.unique(cancer.target, return_counts=True)   # unique() : cancle.target 중 고유한 값만 뽑아서 출력해줌
+np.unique(cancer.target, return_counts=True)   # unique() : cancer.target 중 고유한 값만 뽑아서 출력해줌
 # (array[0, 1]), array([212, 357]) > 0에 대한 값(음성 클래스):212 / 1에 대한 값(양성 클래스):357
 x = cancer.data
 y = cancer.target
@@ -30,6 +30,8 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=
 # 4. 분할 결과 확인
 print(x_train.shape, x_test.shape)
 np.unique(y_train, return_counts=True)   # 훈련 세트의 비율이 적절히 잘 나눠져 있는지 확인
+
+
 
 # # 5. 로지스틱 뉴런 구현하기
 # class LogisticNeuron:
@@ -106,17 +108,17 @@ class SingleLayer:
         b_grad = 1 * err
         return w_grad, b_grad
     
-    def activation(self, z):
+    def activation(self, z):            #*** 외우기
         z = np.clip(z, -100, None)
         a = 1 / (1 + np.exp(-z))
-        return a
+        return a 
 
     def fit(self, x, y, epochs=100):                                                    
         self.w = np.ones(x.shape[1])    # 가중치 초기화 / np.ones : 모든 배열을 1로 채움
         self.b = 0                      # 절편 초기화
         for i in range(epochs):         # epochs만큼 반복
             loss = 0
-            indexes = np.random.permutation(np.len(x))   # **Ver.2**인덱스를 섞음 (확률적 경사하강법이므로, 1개의 샘플을 무작위로 뽑아 쓰기 때문.)
+            indexes = np.random.permutation(len(x))   # **Ver.2**인덱스를 섞음 (확률적 경사하강법이므로, 1개의 샘플을 무작위로 뽑아 쓰기 때문.)
             for i in indexes:  # 모든 샘플에 대해 반복
                 z = self.forpass(x[i])   # 정방향 계산
                 a = self.activation(z)  # 활성화 함수 적용 = 시그모이드 함수 통과함 / z라는 선형 방적식의 결과를 사용함(위에 있음)0
@@ -130,18 +132,18 @@ class SingleLayer:
             self.losses.append(loss/len(y))
 
     def predict(self, x):
-        z = [self.forpass(x_i) in x]
+        z = [self.forpass(x_i) for x_i in x]
         return np.array(z) > 0
     
     def score(self, x, y):
-        return np.mean(self.predict(x) == y)
+        return np.mean(self.predict(x) == y)   #
     
-    layer = SingleLayer()
-    layer.fit(x_train, y_train)
-    layer.score(x_test, y_test)
+layer = SingleLayer()
+layer.fit(x_train, y_train)
+layer.score(x_test, y_test)
 
-    plt.plot(layer.losses)
-    plt.xlabel('epoch')
-    plt.ylabel('loss')
-    plt.show()
+plt.plot(layer.losses)
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.show()
 
