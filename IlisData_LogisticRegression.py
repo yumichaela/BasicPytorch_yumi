@@ -68,3 +68,5 @@ from scipy.special import softmax
 
 proba = softmax(decision, axis=1)
 print(np.round(proba, decimals=3))
+
+# https://itstory1592.tistory.com/11
